@@ -1,11 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        ICO Converter - Convert Images to ICO Format Online | Free Tool
+    </title>
+    <meta name="description"
+        content="Convert PNG, JPEG, GIF, BMP images to ICO format online. Free, fast, and secure. No upload required - all processing happens in your browser." />
+    <meta name="keywords"
+        content="ico converter, image to ico, favicon converter, icon converter, png to ico, jpg to ico" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://www.icoconverter.com/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.icoconverter.com/" />
+    <meta property="og:title" content="ICO Converter - Convert Images to ICO Format Online" />
+    <meta property="og:description"
+        content="Convert PNG, JPEG, GIF, BMP images to ICO format online. Free, fast, and secure." />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://www.icoconverter.com/" />
+    <meta property="twitter:title" content="ICO Converter - Convert Images to ICO Format Online" />
+    <meta property="twitter:description"
+        content="Convert PNG, JPEG, GIF, BMP images to ICO format online. Free, fast, and secure." />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./src/styles/index.css" />
 </head>
+
 <body>
-    
+    <div class="container">
+        <header>
+            <h1>🎨 ICO Converter</h1>
+            <p class="subtitle">
+                Convert images to ICO format instantly - No upload required, 100%
+                secure
+            </p>
+        </header>
+
+        <div class="main-card">
+            <div class="upload-area" id="uploadArea">
+                <span class="upload-icon">📁</span>
+                <div class="upload-text">
+                    Drag & drop your image here or click to browse
+                </div>
+                <p style="color: #999; font-size: 0.9rem; margin-bottom: 15px">
+                    Supports PNG, JPEG, GIF, BMP (max 10MB)
+                </p>
+                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                    Choose File
+                </button>
+                <input type="file" id="fileInput" class="file-input" accept="image/*" />
+            </div>
+
+            <div class="options-grid">
+                <div class="option-group">
+                    <h3>📏 Icon Sizes</h3>
+                    <div class="size-grid">
+                        <label class="size-option">
+                            <input type="checkbox" value="16" checked /> 16×16px
+                        </label>
+                        <label class="size-option">
+                            <input type="checkbox" value="32" checked /> 32×32px
+                        </label>
+                        <label class="size-option">
+                            <input type="checkbox" value="48" checked /> 48×48px
+                        </label>
+                        <label class="size-option">
+                            <input type="checkbox" value="64" /> 64×64px
+                        </label>
+                        <label class="size-option">
+                            <input type="checkbox" value="128" /> 128×128px
+                        </label>
+                        <label class="size-option">
+                            <input type="checkbox" value="256" /> 256×256px
+                        </label>
+                    </div>
+                </div>
+
+                <div class="option-group">
+                    <h3>🎯 Image Quality</h3>
+                    <input type="range" class="quality-slider" id="qualitySlider" min="0.1" max="1" step="0.1"
+                        value="0.9" />
+                    <div class="quality-value" id="qualityValue">90%</div>
+                    <p style="font-size: 0.9rem; color: #666; margin-top: 10px">
+                        Higher quality = larger file size
+                    </p>
+                </div>
+            </div>
+
+            <div class="preview-area" id="previewArea">
+                <h3>📸 Image Preview</h3>
+                <div class="preview-grid" id="previewGrid"></div>
+            </div>
+
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <button class="convert-btn" id="convertBtn">🔄 Convert to ICO</button>
+
+            <div class="download-area" id="downloadArea">
+                <h3>✅ Conversion Complete!</h3>
+                <p>Your ICO file is ready for download</p>
+                <a href="#" class="download-btn" id="downloadBtn" download="favicon.ico">💾 Download ICO File</a>
+                <button class="download-btn" onclick="location.reload()" style="
+              background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            ">
+                    🔄 Convert Another
+                </button>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>100% Secure</h3>
+                <p>
+                    All processing happens locally in your browser. Your images never
+                    leave your device.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Lightning Fast</h3>
+                <p>
+                    Instant conversion with no server delays. Convert multiple sizes
+                    simultaneously.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💯</div>
+                <h3>Always Free</h3>
+                <p>
+                    No limits, no watermarks, no registration required. Professional
+                    quality results.
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>
+                &copy; 2025 ICO Converter. Built with ❤️ for developers and designers.
+            </p>
+        </footer>
+    </div>
+
+    <script src="src/scripts/index.js"></script>
 </body>
+
 </html>
