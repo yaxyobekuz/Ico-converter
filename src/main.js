@@ -1,6 +1,7 @@
 class ICOConverter {
   constructor() {
     this.selectedFile = null;
+    this.originalAspectRatio = 1;
     this.initializeEventListeners();
     this.updateQualityDisplay();
   }
@@ -11,7 +12,7 @@ class ICOConverter {
     const qualitySlider = document.getElementById("qualitySlider");
     const convertBtn = document.getElementById("convertBtn");
 
-    // Drag and drop
+    // Drag and drop events
     uploadArea.addEventListener("dragover", (e) => {
       e.preventDefault();
       uploadArea.classList.add("dragover");
@@ -30,19 +31,19 @@ class ICOConverter {
       }
     });
 
-    // File input
+    // File input change
     fileInput.addEventListener("change", (e) => {
       if (e.target.files.length > 0) {
         this.handleFileSelect(e.target.files[0]);
       }
     });
 
-    // Quality slider
+    // Quality slider input
     qualitySlider.addEventListener("input", () => {
       this.updateQualityDisplay();
     });
 
-    // Convert button
+    // Convert button click
     convertBtn.addEventListener("click", () => {
       this.convertToICO();
     });
@@ -72,7 +73,16 @@ class ICOConverter {
     reader.onload = (e) => {
       const img = new Image();
       img.onload = () => {
-        previewGrid.innerHTML = `<div class="preview-item"><img src="${e.target.result}" alt="Original Image" style="max-width: 100px; max-height: 100px"><p><strong>Original</strong><br>${img.width}×${img.height}px</p></div>`;
+        // Store aspect ratio for later use
+        this.originalAspectRatio = img.width / img.height;
+
+        previewGrid.innerHTML = `<div class="preview-item"><img src="${
+          e.target.result
+        }" alt="Original Image" style="max-width: 100px; max-height: 100px"><p><strong>Original</strong><br>${
+          img.width
+        }×${img.height}px<br>Ratio: ${this.originalAspectRatio.toFixed(
+          2
+        )}</p></div>`;
         previewArea.style.display = "block";
       };
       img.src = e.target.result;
@@ -91,6 +101,23 @@ class ICOConverter {
       '.size-option input[type="radio"]:checked'
     );
     return Array.from(checkboxes).map((cb) => parseInt(cb.value));
+  }
+
+  // Calculate dimensions maintaining aspect ratio
+  calculateDimensions(targetSize, aspectRatio) {
+    let width, height;
+
+    if (aspectRatio >= 1) {
+      // Landscape or square - width is limiting factor
+      width = targetSize;
+      height = Math.round(targetSize / aspectRatio);
+    } else {
+      // Portrait - height is limiting factor
+      height = targetSize;
+      width = Math.round(targetSize * aspectRatio);
+    }
+
+    return { width, height };
   }
 
   async convertToICO() {
@@ -117,12 +144,12 @@ class ICOConverter {
       // Create image from file
       const img = await this.createImageFromFile(this.selectedFile);
 
-      // Generate ICO data
+      // Generate ICO data with aspect ratio preserved
       const icoBlob = await this.generateICO(img, sizes, quality);
 
       progressFill.style.width = "100%";
 
-      // Show download
+      // Show download option
       setTimeout(() => {
         this.showDownload(icoBlob);
         progressBar.style.display = "none";
@@ -161,17 +188,23 @@ class ICOConverter {
     const imageData = [];
 
     for (let size of sizes) {
+      // Calculate dimensions preserving aspect ratio
+      const dimensions = this.calculateDimensions(
+        size,
+        this.originalAspectRatio
+      );
+
       const canvas = document.createElement("canvas");
-      canvas.width = size;
-      canvas.height = size;
+      canvas.width = dimensions.width;
+      canvas.height = dimensions.height;
       const ctx = canvas.getContext("2d");
 
-      // Enable image smoothing for better quality
+      // Set high quality rendering
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
 
-      // Draw and resize image
-      ctx.drawImage(sourceImg, 0, 0, size, size);
+      // Draw image with preserved aspect ratio
+      ctx.drawImage(sourceImg, 0, 0, dimensions.width, dimensions.height);
 
       // Convert to PNG blob
       const blob = await new Promise((resolve) => {
@@ -180,7 +213,8 @@ class ICOConverter {
 
       const arrayBuffer = await blob.arrayBuffer();
       imageData.push({
-        size: size,
+        width: dimensions.width,
+        height: dimensions.height,
         data: new Uint8Array(arrayBuffer),
       });
 
@@ -199,7 +233,7 @@ class ICOConverter {
     // ICO file header (6 bytes)
     const header = new ArrayBuffer(6);
     const headerView = new DataView(header);
-    headerView.setUint16(0, 0, true); // Reserved
+    headerView.setUint16(0, 0, true); // Reserved field
     headerView.setUint16(2, 1, true); // Type (1 for ICO)
     headerView.setUint16(4, imageData.length, true); // Number of images
 
@@ -216,8 +250,9 @@ class ICOConverter {
       const entry = imageData[i];
       const offset = i * 16;
 
-      dirView.setUint8(offset, entry.size === 256 ? 0 : entry.size); // Width
-      dirView.setUint8(offset + 1, entry.size === 256 ? 0 : entry.size); // Height
+      // Use actual dimensions instead of assuming square
+      dirView.setUint8(offset, entry.width === 256 ? 0 : entry.width); // Width
+      dirView.setUint8(offset + 1, entry.height === 256 ? 0 : entry.height); // Height
       dirView.setUint8(offset + 2, 0); // Color palette count
       dirView.setUint8(offset + 3, 0); // Reserved
       dirView.setUint16(offset + 4, 1, true); // Color planes
@@ -228,7 +263,7 @@ class ICOConverter {
       currentOffset += entry.data.length;
     }
 
-    // Combine all parts
+    // Combine all parts into final ICO file
     const totalSize =
       6 +
       directorySize +
@@ -262,7 +297,7 @@ class ICOConverter {
   }
 }
 
-// Initialize the converter when the page loads
+// Initialize converter when page loads
 document.addEventListener("DOMContentLoaded", () => {
   new ICOConverter();
 });
