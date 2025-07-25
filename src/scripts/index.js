@@ -88,7 +88,7 @@ class ICOConverter {
 
   getSelectedSizes() {
     const checkboxes = document.querySelectorAll(
-      '.size-option input[type="checkbox"]:checked'
+      '.size-option input[type="radio"]:checked'
     );
     return Array.from(checkboxes).map((cb) => parseInt(cb.value));
   }
@@ -111,8 +111,7 @@ class ICOConverter {
       );
 
       if (sizes.length === 0) {
-        alert("Please select at least one icon size.");
-        return;
+        return alert("Please select at least one icon size.");
       }
 
       // Create image from file

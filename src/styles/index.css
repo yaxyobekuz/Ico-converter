@@ -12,6 +12,10 @@ body {
   color: #333;
 }
 
+button {
+  font-family: inherit;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -25,10 +29,22 @@ header {
 }
 
 h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: 10px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+h1 img {
+  width: 72px;
+  height: 72px;
+  background: white;
+  border-radius: 100px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .subtitle {
